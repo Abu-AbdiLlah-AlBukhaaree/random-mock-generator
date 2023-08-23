@@ -6,8 +6,86 @@
     <title>Vite + TS</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>
-  <body class="bg-slate-700">
-    <h1>Assalaamu alaykum wa rahmatuLlah wa barakaatuh</h1>
+  <body class="bg-blue-50 pt-10">
+    <header class="visually-hidden">
+      <h1 class="">Assalaamu alaykum wa rahmatuLlah wa barakaatuh</h1>
+    </header>
+
+    <main class="max-w-xl mx-auto">
+      <section class="w-4/5 mx-auto">
+        <h2 class="visually-hidden">Random Mock Generator</h2>
+
+        <button
+          type="button"
+          class="block bg-blue-950 text-gray-50 px-3 py-2 uppercase mx-auto rounded-md tracking-widest border border-transparent transition-all duration-200 ease-linear hover:bg-transparent border-blue-950 hover:text-blue-950"
+        >
+          Generate New Mock
+        </button>
+
+        <section id="mock-section" class="mt-10">
+          <!-- Single Mock -->
+          <article class="border-t border-gray-500 py-4">
+            <h2 class="mb-2 font-bold uppercase">Mock 1</h2>
+
+            <div class="overflow-x-auto">
+              <table class="min-w-full">
+                <thead>
+                  <tr class="bg-blue-950 text-gray-50">
+                    <th class="p-2">ID</th>
+                    <th class="p-2">Type</th>
+                    <th class="p-2">Year</th>
+                    <th class="p-2">No.</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr class="border-t">
+                    <td class="p-2 text-center">BIO 001</td>
+                    <td class="p-2 text-center">Test</td>
+                    <td class="p-2 text-center">2023</td>
+                    <td class="p-2 text-center">4</td>
+                  </tr>
+
+                  <tr class="border-t">
+                    <td class="p-2 text-center">BIO 001</td>
+                    <td class="p-2 text-center">Test</td>
+                    <td class="p-2 text-center">2023</td>
+                    <td class="p-2 text-center">4</td>
+                  </tr>
+
+                  <tr class="border-t">
+                    <td class="p-2 text-center">BIO 001</td>
+                    <td class="p-2 text-center">Test</td>
+                    <td class="p-2 text-center">2023</td>
+                    <td class="p-2 text-center">4</td>
+                  </tr>
+
+                  <tr class="border-t">
+                    <td class="p-2 text-center">BIO 001</td>
+                    <td class="p-2 text-center">Test</td>
+                    <td class="p-2 text-center">2023</td>
+                    <td class="p-2 text-center">4</td>
+                  </tr>
+                  <tr class="border-t">
+                    <td class="p-2 text-center">BIO 001</td>
+                    <td class="p-2 text-center">Test</td>
+                    <td class="p-2 text-center">2023</td>
+                    <td class="p-2 text-center">4</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+          <!-- end of Single Mock -->
+        </section>
+      </section>
+    </main>
+
+    <footer class="visually-hidden">
+      Copyright &copy; faobadev <span>2023</span>
+    </footer>
+
+    <!-- js -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
