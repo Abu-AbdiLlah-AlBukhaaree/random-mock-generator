@@ -27,6 +27,7 @@ interface randomMockArrInterface {
   examType: 'test' | 'exam';
   year: number;
   question: number;
+  disabled: boolean;
 }
 
 // ******** VARIABLES ***********
@@ -35,9 +36,15 @@ const generateNewMockBtn = document.getElementById(
   'new-mock-btn'
 ) as HTMLButtonElement;
 const mockSection = document.getElementById('mock-section') as HTMLElement;
+const clear = document.getElementById('clear') as HTMLButtonElement;
 
 // Arrays
 let masterArray: randomMockArrInterface[][] = [];
+const getItems = localStorage.getItem('subjects');
+
+if (getItems) {
+  masterArray = JSON.parse(getItems);
+}
 
 let singleBranchOfMasterArray: randomMockArrInterface[] = [];
 
@@ -115,14 +122,53 @@ const subjects: subjectsType = [
     },
   },
 ];
-
 const examTypes: ['test', 'exam'] = ['test', 'exam'];
-
-let fullMockDOMArray: string[] = [];
 
 let index: number;
 
 // ******** EVENT LISTENERS ***********
+
+const newMaster = masterArray.map((arr) => {
+  let id: number = 0;
+  let disabilityStatus: boolean = arr[0].disabled;
+
+  let newArr = arr.map((item) => {
+    const { index, subjectID, examType, year, question } = item;
+
+    id = index;
+
+    return singleSubject(subjectID, examType, year, question);
+  });
+
+  return fullMockDOM(id, newArr.join(''), disabilityStatus);
+});
+mockSection.innerHTML = newMaster.join('');
+
+const submitBtns: NodeListOf<HTMLButtonElement> =
+  document.querySelectorAll('#submit-btn');
+submitBtns.forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    const element = e.currentTarget as HTMLButtonElement;
+    element.disabled = true;
+    const dataId = element.dataset.id;
+    console.log(element.dataset.id);
+
+    let i = 0;
+    while (i < masterArray.length) {
+      const btnParent = masterArray[i];
+
+      if (btnParent[0].index === parseInt(dataId!)) {
+        console.log(btnParent);
+
+        btnParent.forEach((item) => (item.disabled = true));
+      }
+
+      i++;
+    }
+  });
+  localStorage.setItem('subjects', JSON.stringify(masterArray));
+});
+
 generateNewMockBtn.addEventListener('click', () => {
   // Arrays Magic
   const subjectsMapped = subjects.map((subject) => {
@@ -144,6 +190,9 @@ generateNewMockBtn.addEventListener('click', () => {
       examType: newExamType,
       year: singleNewYear,
       question: randomQuestion,
+      // !!! TODO !!!
+      // when you complete result calculation, change disabled to 'false'
+      disabled: true,
     };
   });
 
@@ -151,6 +200,8 @@ generateNewMockBtn.addEventListener('click', () => {
 
   const newMasterArray = masterArray.map((arr) => {
     let id: number = 0;
+    let disabilityStatus: boolean = arr[0].disabled;
+
     let newArr = arr.map((item) => {
       const { index, subjectID, examType, year, question } = item;
 
@@ -158,26 +209,48 @@ generateNewMockBtn.addEventListener('click', () => {
 
       return singleSubject(subjectID, examType, year, question);
     });
-    return fullMockDOM(id, newArr.join(''));
+
+    return fullMockDOM(id, newArr.join(''), disabilityStatus);
   });
 
   mockSection.innerHTML = newMasterArray.join('');
+
   const submitBtns: NodeListOf<HTMLButtonElement> =
     document.querySelectorAll('#submit-btn');
 
   submitBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
+      console.log('clicked');
+
       const element = e.currentTarget as HTMLButtonElement;
       element.disabled = true;
-      console.log('clicked');
+      const dataId = element.dataset.id;
       console.log(element.dataset.id);
 
-      // btn.classList.remove('bg-blue-950');
-      // btn.classList.remove('text-gray-50');
-      // btn.classList.add('text-blue-950');
-      // btn.classList.add('text-gray-50');
+      let i = 0;
+      while (i < masterArray.length) {
+        const btnParent = masterArray[i];
+
+        if (btnParent[0].index === parseInt(dataId!)) {
+          console.log(btnParent);
+
+          btnParent.forEach((item) => (item.disabled = true));
+        }
+
+        i++;
+      }
+      localStorage.setItem('subjects', JSON.stringify(masterArray));
     });
   });
+
+  localStorage.setItem('subjects', JSON.stringify(masterArray));
+});
+
+// clear local storage
+clear.addEventListener('click', () => {
+  localStorage.clear();
+  masterArray = [];
+  mockSection.innerHTML = '';
 });
 
 // ******** LOCAL STORAGE ***********
@@ -199,7 +272,10 @@ function singleSubject(
   `;
 }
 
-function fullMockDOM(index: number, subjectsDOM: string) {
+function fullMockDOM(index: number, subjectsDOM: string, disability: boolean) {
+  let status = '';
+  if (disability) status = 'disabled';
+
   return `
     <article class="border-t border-gray-500 py-10">
       <h2 class="mb-2 font-bold uppercase">Mock ${index}</h2>
@@ -278,7 +354,7 @@ function fullMockDOM(index: number, subjectsDOM: string) {
           />
         </div>
 
-        <button id="submit-btn" type="submit" data-id="${index}" class="bg-blue-950 cursor-pointer text-gray-50 px-2 py-1 rounded-md tracking-widest border border-transparent transition-all duration-200 ease-linear hover:bg-transparent hover:border-blue-950 hover:text-blue-950">Submit</button>
+        <button id="submit-btn" ${status} type="submit" data-id="${index}" class="bg-blue-950 cursor-pointer text-gray-50 px-2 py-1 rounded-md tracking-widest border border-transparent transition-all duration-200 ease-linear hover:bg-transparent hover:border-blue-950 hover:text-blue-950">Submit</button>
       </form>
     </article>
   `;
