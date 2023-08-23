@@ -46,7 +46,7 @@ if (getItems) {
   masterArray = JSON.parse(getItems);
 }
 
-let singleBranchOfMasterArray: randomMockArrInterface[] = [];
+// let singleBranchOfMasterArray: randomMockArrInterface[] = [];
 
 const subjects: subjectsType = [
   {
@@ -151,14 +151,14 @@ submitBtns.forEach((btn) => {
     const element = e.currentTarget as HTMLButtonElement;
     element.disabled = true;
     const dataId = element.dataset.id;
-    console.log(element.dataset.id);
+    // console.log(element.dataset.id);
 
     let i = 0;
     while (i < masterArray.length) {
       const btnParent = masterArray[i];
 
       if (btnParent[0].index === parseInt(dataId!)) {
-        console.log(btnParent);
+        // console.log(btnParent);
 
         btnParent.forEach((item) => (item.disabled = true));
       }
@@ -220,19 +220,19 @@ generateNewMockBtn.addEventListener('click', () => {
 
   submitBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
-      console.log('clicked');
+      // console.log('clicked');
 
       const element = e.currentTarget as HTMLButtonElement;
       element.disabled = true;
       const dataId = element.dataset.id;
-      console.log(element.dataset.id);
+      // console.log(element.dataset.id);
 
       let i = 0;
       while (i < masterArray.length) {
         const btnParent = masterArray[i];
 
         if (btnParent[0].index === parseInt(dataId!)) {
-          console.log(btnParent);
+          // console.log(btnParent);
 
           btnParent.forEach((item) => (item.disabled = true));
         }
