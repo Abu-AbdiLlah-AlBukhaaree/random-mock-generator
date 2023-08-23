@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <title>Random Mock Generator</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body class="bg-blue-50 pt-10">
@@ -11,20 +11,22 @@
       <h1 class="">Assalaamu alaykum wa rahmatuLlah wa barakaatuh</h1>
     </header>
 
-    <main class="max-w-xl mx-auto">
+    <main class="max-w-2xl mx-auto">
       <section class="w-4/5 mx-auto">
         <h2 class="visually-hidden">Random Mock Generator</h2>
 
         <button
           type="button"
-          class="block bg-blue-950 text-gray-50 px-3 py-2 uppercase mx-auto rounded-md tracking-widest border border-transparent transition-all duration-200 ease-linear hover:bg-transparent border-blue-950 hover:text-blue-950"
+          id="new-mock-btn"
+          class="block bg-blue-950 text-gray-50 px-3 py-2 uppercase mx-auto rounded-md tracking-widest border border-transparent transition-all duration-200 ease-linear hover:bg-transparent hover:border-blue-950 hover:text-blue-950"
         >
           Generate New Mock
         </button>
 
         <section id="mock-section" class="mt-10">
+          <h3 class="visually-hidden">Mock Exam Details</h3>
           <!-- Single Mock -->
-          <article class="border-t border-gray-500 py-4">
+          <!-- <article class="border-t border-gray-500 py-4">
             <h2 class="mb-2 font-bold uppercase">Mock 1</h2>
 
             <div class="overflow-x-auto">
@@ -75,7 +77,61 @@
                 </tbody>
               </table>
             </div>
-          </article>
+
+            <form class="mt-4 flex gap-3 flex-wrap">
+              <div>
+                <label for="date">Date:</label>
+                <input
+                  id="date"
+                  type="text"
+                  placeholder="Date"
+                  value="2023-08-24"
+                  class="px-2 py-1 max-w-[7rem] tracking-wide bg-transparent border border-blue-950 rounded-md"
+                  disabled
+                />
+              </div>
+
+              <div>
+                <label for="apt">APT:</label>
+                <input
+                  id="apt"
+                  type="number"
+                  max="10"
+                  class="px-2 py-1 max-w-[4rem] tracking-wide bg-transparent border border-blue-950 transition-all duration-200 ease-linear hover:bg-white focus:bg-white rounded-md"
+                />
+              </div>
+
+              <div>
+                <label for="bio">BIO:</label>
+                <input
+                  id="bio"
+                  type="number"
+                  max="10"
+                  class="px-2 py-1 max-w-[4rem] tracking-wide bg-transparent border border-blue-950 transition-all duration-200 ease-linear hover:bg-white focus:bg-white rounded-md"
+                />
+              </div>
+
+              <div>
+                <label for="chm">CHM:</label>
+                <input
+                  id="chm"
+                  type="number"
+                  max="10"
+                  class="px-2 py-1 max-w-[4rem] tracking-wide bg-transparent border border-blue-950 transition-all duration-200 ease-linear hover:bg-white focus:bg-white rounded-md"
+                />
+              </div>
+
+              <div>
+                <label for="phy">PHY:</label>
+                <input
+                  id="phy"
+                  type="number"
+                  max="10"
+                  class="px-2 py-1 max-w-[4rem] tracking-wide bg-transparent border border-blue-950 transition-all duration-200 ease-linear hover:bg-white focus:bg-white rounded-md"
+                />
+              </div>
+            </form>
+          </article> -->
           <!-- end of Single Mock -->
         </section>
       </section>
