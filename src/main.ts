@@ -29,6 +29,7 @@ interface randomMockArrInterface {
   question: number;
   disabled: boolean;
 }
+type callbackFunction = (date: Date) => string;
 
 // ******** VARIABLES ***********
 // DOM Elements
@@ -155,7 +156,7 @@ const newMaster = masterArray.map((arr) => {
     return singleSubject(subjectID, examType, year, question);
   });
 
-  return fullMockDOM(id, newArr.join(''), disabilityStatus);
+  return fullMockDOM(id, newArr.join(''), disabilityStatus, generateDate);
 });
 mockSection.innerHTML = newMaster.join('');
 
@@ -225,7 +226,7 @@ generateNewMockBtn.addEventListener('click', () => {
       return singleSubject(subjectID, examType, year, question);
     });
 
-    return fullMockDOM(id, newArr.join(''), disabilityStatus);
+    return fullMockDOM(id, newArr.join(''), disabilityStatus, generateDate);
   });
 
   mockSection.innerHTML = newMasterArray.join('');
@@ -287,7 +288,12 @@ function singleSubject(
   `;
 }
 
-function fullMockDOM(index: number, subjectsDOM: string, disability: boolean) {
+function fullMockDOM(
+  index: number,
+  subjectsDOM: string,
+  disability: boolean,
+  callback: callbackFunction
+) {
   let status = '';
   if (disability) status = 'disabled';
 
@@ -319,7 +325,7 @@ function fullMockDOM(index: number, subjectsDOM: string, disability: boolean) {
             id="date"
             type="text"
             placeholder="Date"
-            value="2023-08-24"
+            value="${callback(new Date())}"
             class="px-2 py-1 max-w-[7rem] tracking-wide bg-transparent border border-blue-950 rounded-md"
             disabled
           />
@@ -377,4 +383,12 @@ function fullMockDOM(index: number, subjectsDOM: string, disability: boolean) {
 
 function getRandomNumber(max: number): number {
   return Math.floor(Math.random() * max);
+}
+
+function generateDate(date: Date): string {
+  const year: number = date.getFullYear();
+  const month: string = String(date.getMonth() + 1).padStart(2, '0');
+  const day: string = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
 }
