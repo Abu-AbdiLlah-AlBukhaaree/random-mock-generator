@@ -28,8 +28,9 @@ interface randomMockArrInterface {
   year: number;
   question: number;
   disabled: boolean;
+  dateCreated: string;
 }
-type callbackFunction = (date: Date) => string;
+// type callbackFunction = (date: Date) => string;
 
 // ******** VARIABLES ***********
 // DOM Elements
@@ -147,16 +148,18 @@ let index: number;
 const newMaster = masterArray.map((arr) => {
   let id: number = 0;
   let disabilityStatus: boolean = arr[0].disabled;
+  let date: string = '';
 
   let newArr = arr.map((item) => {
-    const { index, subjectID, examType, year, question } = item;
+    const { index, subjectID, examType, year, question, dateCreated } = item;
 
     id = index;
+    date = dateCreated;
 
     return singleSubject(subjectID, examType, year, question);
   });
 
-  return fullMockDOM(id, newArr.join(''), disabilityStatus, generateDate);
+  return fullMockDOM(id, newArr.join(''), disabilityStatus, date);
 });
 mockSection.innerHTML = newMaster.join('');
 
@@ -206,9 +209,11 @@ generateNewMockBtn.addEventListener('click', () => {
       examType: newExamType,
       year: singleNewYear,
       question: randomQuestion,
+
       // !!! TODO !!!
       // when you complete result calculation, change disabled to 'false'
       disabled: true,
+      dateCreated: formatDateAndTime(new Date()),
     };
   });
 
@@ -217,16 +222,18 @@ generateNewMockBtn.addEventListener('click', () => {
   const newMasterArray = masterArray.map((arr) => {
     let id: number = 0;
     let disabilityStatus: boolean = arr[0].disabled;
+    let date: string = '';
 
     let newArr = arr.map((item) => {
-      const { index, subjectID, examType, year, question } = item;
+      const { index, subjectID, examType, year, question, dateCreated } = item;
 
       id = index;
+      date = dateCreated;
 
       return singleSubject(subjectID, examType, year, question);
     });
 
-    return fullMockDOM(id, newArr.join(''), disabilityStatus, generateDate);
+    return fullMockDOM(id, newArr.join(''), disabilityStatus, date);
   });
 
   mockSection.innerHTML = newMasterArray.join('');
@@ -292,7 +299,7 @@ function fullMockDOM(
   index: number,
   subjectsDOM: string,
   disability: boolean,
-  callback: callbackFunction
+  date: string
 ) {
   let status = '';
   if (disability) status = 'disabled';
@@ -325,8 +332,8 @@ function fullMockDOM(
             id="date"
             type="text"
             placeholder="Date"
-            value="${callback(new Date())}"
-            class="px-2 py-1 max-w-[7rem] tracking-wide bg-transparent border border-blue-950 rounded-md"
+            value="${date}"
+            class="px-2 py-1 max-w-[10rem] tracking-wide bg-transparent border border-blue-950 rounded-md"
             disabled
           />
         </div>
@@ -385,10 +392,18 @@ function getRandomNumber(max: number): number {
   return Math.floor(Math.random() * max);
 }
 
-function generateDate(date: Date): string {
-  const year: number = date.getFullYear();
-  const month: string = String(date.getMonth() + 1).padStart(2, '0');
-  const day: string = String(date.getDate()).padStart(2, '0');
+function formatDateAndTime(date: Date) {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
 
-  return `${year}-${month}-${day}`;
+  const formattedDateAndTime = `${day}-${month}-${year}, ${hours}:${minutes}`;
+  return formattedDateAndTime;
 }
+
+// Usage
+// const currentDate = new Date();
+// const formattedDateTime = formatDateAndTime(currentDate);
+// console.log(formattedDateTime); // Example output: "24-08-2023 15:30"
