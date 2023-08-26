@@ -139,7 +139,6 @@ const subjects: subjectsType = [
     },
   },
 ];
-const examTypes: ['test', 'exam'] = ['test', 'exam'];
 
 let index: number;
 
@@ -163,6 +162,7 @@ const newMaster = masterArray.map((arr) => {
 });
 mockSection.innerHTML = newMaster.join('');
 
+// submit button functionality
 const submitBtns: NodeListOf<HTMLButtonElement> =
   document.querySelectorAll('#submit-btn');
 submitBtns.forEach((btn) => {
@@ -188,6 +188,7 @@ submitBtns.forEach((btn) => {
   localStorage.setItem('subjects', JSON.stringify(masterArray));
 });
 
+// generate new mock functionality
 generateNewMockBtn.addEventListener('click', () => {
   // Arrays Magic
   const subjectsMapped = subjects.map((subject) => {
@@ -195,9 +196,11 @@ generateNewMockBtn.addEventListener('click', () => {
 
     // if you don't understand, I'm sorry
     const newExamType = examType[getRandomNumber(examType.length)];
-    const newYear = year[examTypes[getRandomNumber(examTypes.length)]];
+    const newYear = year[newExamType];
     const singleNewYear = newYear[getRandomNumber(newYear.length)];
-    const newQuestion = question[examTypes[getRandomNumber(examTypes.length)]];
+    const newQuestion = question[newExamType];
+    console.log(`${subjectID} | ${newExamType} | ${newYear} | ${newQuestion}`);
+
     let randomQuestion = getRandomNumber(newQuestion - 5);
     if (!randomQuestion) randomQuestion = 1;
 
