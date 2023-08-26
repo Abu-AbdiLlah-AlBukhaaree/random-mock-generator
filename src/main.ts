@@ -30,7 +30,6 @@ interface randomMockArrInterface {
   disabled: boolean;
   dateCreated: string;
 }
-// type callbackFunction = (date: Date) => string;
 
 // ******** VARIABLES ***********
 // DOM Elements
@@ -47,8 +46,6 @@ const getItems = localStorage.getItem('subjects');
 if (getItems) {
   masterArray = JSON.parse(getItems);
 }
-
-// let singleBranchOfMasterArray: randomMockArrInterface[] = [];
 
 const subjects: subjectsType = [
   {
@@ -170,15 +167,12 @@ submitBtns.forEach((btn) => {
     const element = e.currentTarget as HTMLButtonElement;
     element.disabled = true;
     const dataId = element.dataset.id;
-    // console.log(element.dataset.id);
 
     let i = 0;
     while (i < masterArray.length) {
       const btnParent = masterArray[i];
 
       if (btnParent[0].index === parseInt(dataId!)) {
-        // console.log(btnParent);
-
         btnParent.forEach((item) => (item.disabled = true));
       }
 
@@ -219,6 +213,7 @@ generateNewMockBtn.addEventListener('click', () => {
   });
 
   masterArray.push(subjectsMapped);
+  masterArray.sort(sortMasterArray); // sort master array in descending order with respect to 'index'
 
   const newMasterArray = masterArray.map((arr) => {
     let id: number = 0;
@@ -244,20 +239,15 @@ generateNewMockBtn.addEventListener('click', () => {
 
   submitBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
-      // console.log('clicked');
-
       const element = e.currentTarget as HTMLButtonElement;
       element.disabled = true;
       const dataId = element.dataset.id;
-      // console.log(element.dataset.id);
 
       let i = 0;
       while (i < masterArray.length) {
         const btnParent = masterArray[i];
 
         if (btnParent[0].index === parseInt(dataId!)) {
-          // console.log(btnParent);
-
           btnParent.forEach((item) => (item.disabled = true));
         }
 
@@ -404,7 +394,9 @@ function formatDateAndTime(date: Date) {
   return formattedDateAndTime;
 }
 
-// Usage
-// const currentDate = new Date();
-// const formattedDateTime = formatDateAndTime(currentDate);
-// console.log(formattedDateTime); // Example output: "24-08-2023 15:30"
+function sortMasterArray(
+  a: randomMockArrInterface[],
+  b: randomMockArrInterface[]
+): number {
+  return b[0].index - a[0].index;
+}
