@@ -199,8 +199,6 @@ generateNewMockBtn.addEventListener('click', () => {
     const newYear = year[newExamType];
     const singleNewYear = newYear[getRandomNumber(newYear.length)];
     const newQuestion = question[newExamType];
-    console.log(`${subjectID} | ${newExamType} | ${newYear} | ${newQuestion}`);
-
     let randomQuestion = getRandomNumber(newQuestion - 5);
     if (!randomQuestion) randomQuestion = 1;
 
