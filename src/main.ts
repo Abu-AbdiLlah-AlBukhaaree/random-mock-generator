@@ -37,25 +37,19 @@ const generateNewMockBtn = document.getElementById(
   'new-mock-btn'
 ) as HTMLButtonElement;
 const mockSection = document.getElementById('mock-section') as HTMLElement;
-const clear = document.getElementById('clear') as HTMLButtonElement;
+const clearBtn = document.getElementById('clear') as HTMLButtonElement;
 
 // Arrays
-let masterArray: randomMockArrInterface[][] = [];
-const getItems = localStorage.getItem('subjects');
 
-if (getItems) {
-  masterArray = JSON.parse(getItems);
-}
-
+// This is the array that a random mock exam will be generated with respect to.
+// It contains data for all availble subjects, years, and questions available for each exam type (test/exam)
 const subjects: subjectsType = [
   {
     subjectID: 'BIO 001',
     examType: ['test', 'exam'],
     year: {
       test: [2019, 2018, 2014, 2012, 2011, 2010, 2008, 2007, 2005, 2004],
-      exam: [
-        2017, 2016, 2015, 2014, 2013, 2012, 2010, 2009, 2008, 2007, 2005, 2004,
-      ],
+      exam: [2017, 2016, 2015, 2014, 2013, 2012, 2010, 2009, 2007, 2005, 2004],
     },
     question: {
       test: 40,
@@ -137,27 +131,39 @@ const subjects: subjectsType = [
   },
 ];
 
-let index: number;
+// This group is to display the already generated array (if available) stored in the Local Storage
+let masterArray: randomMockArrInterface[][] = [];
+const getMasterArray = localStorage.getItem('subjects');
+if (getMasterArray) {
+  masterArray = JSON.parse(getMasterArray);
+}
 
 // ******** EVENT LISTENERS ***********
 
-const newMaster = masterArray.map((arr) => {
-  let id: number = 0;
+const masterArrayDOM = masterArray.map((arr) => {
+  // The master array is an array of arrays
+  // The inner array contains data for a single, full randomly-generated mock
+  // The inner array is an array of objects. Each object cotains data for each 'subjectID' and its generated mock
+
+  // The inner map method on 'arr' is used to generate each 'subjectID' and its mock data as a table row
+  // newArr converts each object in 'arr' to table row and stores the stringed table row as an item in the array
+  // The returned fullmockDOM returns a full table based on the content of each array in the 'masterArray'
+
+  // Because I need same data in each 'arr' to be displayed outsided the table row (i.e to be displayed in fullMockDOM), I neeeded to declare the following let variables so as to collect the data from the objects in the array of objects and display them in fullMockDOM
+  // I collected the needed data from the first item in the array of objects since each object in an array contains the same value for the data collected
+  let id: number = arr[0].index;
   let disabilityStatus: boolean = arr[0].disabled;
-  let date: string = '';
+  let date: string = arr[0].dateCreated;
 
   let newArr = arr.map((item) => {
-    const { index, subjectID, examType, year, question, dateCreated } = item;
-
-    id = index;
-    date = dateCreated;
+    const { subjectID, examType, year, question } = item;
 
     return singleSubject(subjectID, examType, year, question);
   });
 
   return fullMockDOM(id, newArr.join(''), disabilityStatus, date);
 });
-mockSection.innerHTML = newMaster.join('');
+mockSection.innerHTML = masterArrayDOM.join('');
 
 // submit button functionality
 const submitBtns: NodeListOf<HTMLButtonElement> =
@@ -179,27 +185,31 @@ submitBtns.forEach((btn) => {
       i++;
     }
   });
-  localStorage.setItem('subjects', JSON.stringify(masterArray));
 });
 
 // generate new mock functionality
 generateNewMockBtn.addEventListener('click', () => {
-  // Arrays Magic
-  const subjectsMapped = subjects.map((subject) => {
+  let index: number; // For generating an index for each generated mock
+  masterArray.length === 0 ? (index = 1) : (index = masterArray.length + 1);
+
+  // The 'randomMockArr' is the engine of the app
+  // Remember the 'subjects' array?
+  // The 'randomMockArr' maps on the 'subjects' array and generate for each 'subjectID' a random 'examType'(test/exam), year(based on 'examType' generated), and question to start from(based on 'examType' generated)
+  // The inspect the 'subjects' array to better understand how this functionality array
+  const randomMockArr = subjects.map((subject) => {
     const { subjectID, examType, year, question } = subject;
 
-    // if you don't understand, I'm sorry
-    const newExamType = examType[getRandomNumber(examType.length)];
-    const newYear = year[newExamType];
-    const singleNewYear = newYear[getRandomNumber(newYear.length)];
-    const newQuestion = question[newExamType];
-    let randomQuestion = getRandomNumber(newQuestion - 5);
-    if (!randomQuestion) randomQuestion = 1;
+    const newExamType = examType[getRandomNumber(examType.length)]; // to generate 'examType' (test/exam)
 
-    masterArray.length === 0 ? (index = 1) : (index = masterArray.length + 1);
+    const newYear = year[newExamType]; // to get years available for generated 'examType' (returns an array)
+    const singleNewYear = newYear[getRandomNumber(newYear.length)]; // get a random year from the array returned
+
+    const newQuestion = question[newExamType]; // to get number of questions available for generated 'examType' (returns an number)
+    let randomQuestion = getRandomNumber(newQuestion - 5); // to get a random number, from 0 to the number returned above
+    if (!randomQuestion) randomQuestion = 1; // return '1' if the generated number is 0
 
     return {
-      index: index,
+      index,
       subjectID,
       examType: newExamType,
       year: singleNewYear,
@@ -212,19 +222,16 @@ generateNewMockBtn.addEventListener('click', () => {
     };
   });
 
-  masterArray.push(subjectsMapped);
-  masterArray.sort(sortMasterArray); // sort master array in descending order with respect to 'index'
+  masterArray.push(randomMockArr);
+  masterArray.sort(sortMasterArray); // to sort master array in descending order with respect to 'index'
 
   const newMasterArray = masterArray.map((arr) => {
-    let id: number = 0;
+    let id: number = arr[0].index;
     let disabilityStatus: boolean = arr[0].disabled;
-    let date: string = '';
+    let date: string = arr[0].dateCreated;
 
     let newArr = arr.map((item) => {
-      const { index, subjectID, examType, year, question, dateCreated } = item;
-
-      id = index;
-      date = dateCreated;
+      const { subjectID, examType, year, question } = item;
 
       return singleSubject(subjectID, examType, year, question);
     });
@@ -240,7 +247,7 @@ generateNewMockBtn.addEventListener('click', () => {
   submitBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
       const element = e.currentTarget as HTMLButtonElement;
-      element.disabled = true;
+      // element.disabled = true; // Uncomment this once you start working on collect mock result data form
       const dataId = element.dataset.id;
 
       let i = 0;
@@ -261,7 +268,7 @@ generateNewMockBtn.addEventListener('click', () => {
 });
 
 // clear local storage
-clear.addEventListener('click', () => {
+clearBtn.addEventListener('click', () => {
   localStorage.clear();
   masterArray = [];
   mockSection.innerHTML = '';
@@ -270,6 +277,9 @@ clear.addEventListener('click', () => {
 // ******** LOCAL STORAGE ***********
 
 // ******** FUNCTIONS ***********
+// This function accepts some info from an object and converts its data to a table row
+// It is used to convert a single 'subjectID' and its related mock info to a table row
+// The generated table rows will be consumed by the fullMockDOM
 function singleSubject(
   subjectID: string,
   examType: 'test' | 'exam',
@@ -286,12 +296,17 @@ function singleSubject(
   `;
 }
 
+// This function generates returns an article whose content has been dynamically filled from by an array of objects
+// The array of objects is a randomly generated mock
 function fullMockDOM(
   index: number,
   subjectsDOM: string,
   disability: boolean,
   date: string
 ) {
+  // The functionality below is to update the status of the submit button is it has been clicked
+  // For now the submit button is disabled
+  // The toggling functionality of the submit button will be activated once I start working on collecting form data for mock exam results
   let status = '';
   if (disability) status = 'disabled';
 
