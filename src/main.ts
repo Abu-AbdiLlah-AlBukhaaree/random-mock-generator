@@ -32,14 +32,14 @@ interface randomMockArrInterface {
 }
 
 // ******** VARIABLES ***********
-// DOM Elements
+// !!! DOM Elements
 const generateNewMockBtn = document.getElementById(
   'new-mock-btn'
 ) as HTMLButtonElement;
 const mockSection = document.getElementById('mock-section') as HTMLElement;
 const clearBtn = document.getElementById('clear') as HTMLButtonElement;
 
-// Arrays
+// !!! Arrays
 
 // This is the array that a random mock exam will be generated with respect to.
 // It contains data for all availble subjects, years, and questions available for each exam type (test/exam)
@@ -137,57 +137,10 @@ const getMasterArray = localStorage.getItem('subjects');
 if (getMasterArray) {
   masterArray = JSON.parse(getMasterArray);
 }
+displayMockSectionContent();
+submitBtnsFuntionality();
 
 // ******** EVENT LISTENERS ***********
-
-const masterArrayDOM = masterArray.map((arr) => {
-  // The master array is an array of arrays
-  // The inner array contains data for a single, full randomly-generated mock
-  // The inner array is an array of objects. Each object cotains data for each 'subjectID' and its generated mock
-
-  // The inner map method on 'arr' is used to generate each 'subjectID' and its mock data as a table row
-  // newArr converts each object in 'arr' to table row and stores the stringed table row as an item in the array
-  // The returned fullmockDOM returns a full table based on the content of each array in the 'masterArray'
-
-  // Because I need same data in each 'arr' to be displayed outsided the table row (i.e to be displayed in fullMockDOM), I neeeded to declare the following let variables so as to collect the data from the objects in the array of objects and display them in fullMockDOM
-  // I collected the needed data from the first item in the array of objects since each object in an array contains the same value for the data collected
-  let id: number = arr[0].index;
-  let disabilityStatus: boolean = arr[0].disabled;
-  let date: string = arr[0].dateCreated;
-
-  let newArr = arr.map((item) => {
-    const { subjectID, examType, year, question } = item;
-
-    return singleSubject(subjectID, examType, year, question);
-  });
-
-  return fullMockDOM(id, newArr.join(''), disabilityStatus, date);
-});
-mockSection.innerHTML = masterArrayDOM.join('');
-
-// submit button functionality
-const submitBtns: NodeListOf<HTMLButtonElement> =
-  document.querySelectorAll('#submit-btn');
-submitBtns.forEach((btn) => {
-  btn.addEventListener('click', (e) => {
-    const element = e.currentTarget as HTMLButtonElement;
-    element.disabled = true;
-    const dataId = element.dataset.id;
-
-    let i = 0;
-    while (i < masterArray.length) {
-      const btnParent = masterArray[i];
-
-      if (btnParent[0].index === parseInt(dataId!)) {
-        btnParent.forEach((item) => (item.disabled = true));
-      }
-
-      i++;
-    }
-  });
-});
-
-// generate new mock functionality
 generateNewMockBtn.addEventListener('click', () => {
   let index: number; // For generating an index for each generated mock
   masterArray.length === 0 ? (index = 1) : (index = masterArray.length + 1);
@@ -225,51 +178,14 @@ generateNewMockBtn.addEventListener('click', () => {
   masterArray.push(randomMockArr);
   masterArray.sort(sortMasterArray); // to sort master array in descending order with respect to 'index'
 
-  const newMasterArray = masterArray.map((arr) => {
-    let id: number = arr[0].index;
-    let disabilityStatus: boolean = arr[0].disabled;
-    let date: string = arr[0].dateCreated;
-
-    let newArr = arr.map((item) => {
-      const { subjectID, examType, year, question } = item;
-
-      return singleSubject(subjectID, examType, year, question);
-    });
-
-    return fullMockDOM(id, newArr.join(''), disabilityStatus, date);
-  });
-
-  mockSection.innerHTML = newMasterArray.join('');
-
-  const submitBtns: NodeListOf<HTMLButtonElement> =
-    document.querySelectorAll('#submit-btn');
-
-  submitBtns.forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      const element = e.currentTarget as HTMLButtonElement;
-      // element.disabled = true; // Uncomment this once you start working on collect mock result data form
-      const dataId = element.dataset.id;
-
-      let i = 0;
-      while (i < masterArray.length) {
-        const btnParent = masterArray[i];
-
-        if (btnParent[0].index === parseInt(dataId!)) {
-          btnParent.forEach((item) => (item.disabled = true));
-        }
-
-        i++;
-      }
-      localStorage.setItem('subjects', JSON.stringify(masterArray));
-    });
-  });
-
-  localStorage.setItem('subjects', JSON.stringify(masterArray));
+  displayMockSectionContent();
+  submitBtnsFuntionality();
+  setMasterArrayToLocalStorage();
 });
 
 // clear local storage
 clearBtn.addEventListener('click', () => {
-  localStorage.clear();
+  localStorage.removeItem('subjects');
   masterArray = [];
   mockSection.innerHTML = '';
 });
@@ -398,6 +314,7 @@ function getRandomNumber(max: number): number {
   return Math.floor(Math.random() * max);
 }
 
+// formats date and time to the format - 'dd-mm-yyyy, hh:mm'
 function formatDateAndTime(date: Date) {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -414,4 +331,66 @@ function sortMasterArray(
   b: randomMockArrInterface[]
 ): number {
   return b[0].index - a[0].index;
+}
+
+function convertMasterArrayToDOMContent() {
+  const masterArrayDOM = masterArray.map((arr) => {
+    // The master array is an array of arrays
+    // The inner array contains data for a single, full randomly-generated mock
+    // The inner array is an array of objects. Each object cotains data for each 'subjectID' and its generated mock
+
+    // The inner map method on 'arr' is used to generate each 'subjectID' and its mock data as a table row
+    // newArr converts each object in 'arr' to table row and stores the stringed table row as an item in the array
+    // The returned fullmockDOM returns a full table based on the content of each array in the 'masterArray'
+
+    // Because I need same data in each 'arr' to be displayed outsided the table row (i.e to be displayed in fullMockDOM), I neeeded to declare the following let variables so as to collect the data from the objects in the array of objects and display them in fullMockDOM
+    // I collected the needed data from the first item in the array of objects since each object in an array contains the same value for the data collected
+    let id: number = arr[0].index;
+    let disabilityStatus: boolean = arr[0].disabled;
+    let date: string = arr[0].dateCreated;
+
+    let newArr = arr.map((item) => {
+      const { subjectID, examType, year, question } = item;
+
+      return singleSubject(subjectID, examType, year, question);
+    });
+
+    return fullMockDOM(id, newArr.join(''), disabilityStatus, date);
+  });
+  return masterArrayDOM;
+}
+
+function setMasterArrayToLocalStorage() {
+  localStorage.setItem('subjects', JSON.stringify(masterArray));
+}
+
+function submitBtnsFuntionality() {
+  const submitBtns: NodeListOf<HTMLButtonElement> =
+    document.querySelectorAll('#submit-btn');
+
+  submitBtns.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      const element = e.currentTarget as HTMLButtonElement;
+      // element.disabled = true; // Uncomment this once you start working on collect mock result data form
+      const dataId = element.dataset.id;
+      console.log(`Submit button of mock ${dataId} was clicked`);
+
+      let i = 0;
+      while (i < masterArray.length) {
+        const btnParent = masterArray[i];
+
+        if (btnParent[0].index === parseInt(dataId!)) {
+          btnParent.forEach((item) => (item.disabled = true));
+        }
+
+        i++;
+        setMasterArrayToLocalStorage();
+      }
+    });
+  });
+}
+
+// converts 'convertMasterArrayToDOMContent()' array to the content of the 'mockSection'
+function displayMockSectionContent() {
+  mockSection.innerHTML = convertMasterArrayToDOMContent().join('');
 }
